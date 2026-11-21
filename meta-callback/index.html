@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>ShortsLab — Meta dönüşü</title>
+</head>
+<body style="font:16px/1.5 system-ui,sans-serif;margin:2rem;max-width:40rem">
+<p id="m">Meta izni bu bilgisayardaki ShortsLab uygulamasına aktarılıyor…</p>
+<noscript><p>Bu sayfa JavaScript gerektirir.</p></noscript>
+<script>
+// Facebook Login needs an HTTPS redirect. This page only forwards the query (code, state) to the ShortsLab
+// listener on this computer (127.0.0.1); nothing is stored or sent anywhere else. The port comes from the
+// state, which ShortsLab writes as "p<port>-<random>" (see shortslab/ai/meta.py: make_state/state_port).
+(function () {
+  var query = window.location.search;
+  var state = new URLSearchParams(query).get("state") || "";
+  var match = /^p(\d{4,5})-/.exec(state);
+  var port = match ? Number(match[1]) : 0;
+  if (!(port >= 1024 && port <= 65535)) {
+    document.getElementById("m").textContent = "Geçersiz dönüş bilgisi. Komutu ShortsLab'da yeniden çalıştırın.";
+    return;
+  }
+  window.location.replace("http://127.0.0.1:" + port + "/callback" + query);
+})();
+</script>
+</body>
+</html>
